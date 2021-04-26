@@ -210,7 +210,7 @@ if (TopLevel)
   #find_package(Curses)
 endif()
 
-add_definitions(-std=c++11)  # TODO: could this be a problem?
+# add_definitions(-std=c++11)  # TODO: could this be a problem?
 #add_definitions(-Wall)
 add_definitions(-Wno-redeclared-class-member)
 add_definitions(-Wno-sometimes-uninitialized)
