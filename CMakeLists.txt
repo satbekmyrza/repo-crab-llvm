@@ -126,8 +126,7 @@ if (GIT_FOUND)
     set (CRAB_ROOT "${CMAKE_SOURCE_DIR}/crab-llvm/crab" CACHE STRING "crab root directory")
   endif ()
   
-  add_custom_target (crab-git
-     		     ${GIT_EXECUTABLE} clone ${CRAB_REPO} ${CRAB_ROOT})
+  add_custom_target (crab-git ${GIT_EXECUTABLE} clone --depth 1 --branch v1.0 ${CRAB_REPO} ${CRAB_ROOT})
   
   add_custom_target (crab ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
                      DEPENDS crab-git)    
