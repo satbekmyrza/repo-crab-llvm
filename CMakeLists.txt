@@ -139,13 +139,13 @@ endif ()
 
 
 #### begin crab stuff ####
-# if (IS_DIRECTORY ${CRAB_ROOT} AND EXISTS ${CRAB_ROOT}/CMakeLists.txt)
-#  add_subdirectory(${CRAB_ROOT})
-#  include_directories (${CRAB_INCLUDE_DIRS})
-# else()
-#   message (WARNING "No crab found. Run \n\tcmake --build . --target crab && cmake ${CMAKE_SOURCE_DIR}")
-#   return ()
-# endif()
+if (IS_DIRECTORY ${CRAB_ROOT} AND EXISTS ${CRAB_ROOT}/CMakeLists.txt)
+ add_subdirectory(${CRAB_ROOT})
+ include_directories (${CRAB_INCLUDE_DIRS})
+else()
+  message (WARNING "No crab found. Run \n\tcmake --build . --target crab && cmake ${CMAKE_SOURCE_DIR}")
+  return ()
+endif()
 #### end crab stuff ####
 
 if (TopLevel)
