@@ -126,10 +126,16 @@ if (GIT_FOUND)
   endif ()
   
   add_custom_target (crab-git
-     		     ${GIT_EXECUTABLE} clone --depth 1 --branch v1.0 ${CRAB_REPO} ${CRAB_ROOT})
+    ${GIT_EXECUTABLE} clone --depth 1 --branch v1.0 ${CRAB_REPO} ${CRAB_ROOT})
   
-  add_custom_target (crab ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
-                     DEPENDS crab-git)    
+  add_custom_target (crab
+    ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
+    DEPENDS crab-git)    
+  
+  message(STATUS "-------------")
+  message(STATUS "Hello from CMakeLists.txt in satbekmyrza/crab-llvm!")
+  message(STATUS "${CMAKE_CURRENT_LIST_FILE}")
+  message(STATUS "-------------")
 
 else ()
   if (TopLevel)
