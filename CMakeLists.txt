@@ -104,20 +104,19 @@ find_package (Git)
 
 if (GIT_FOUND)
   if (TopLevel)
-    set (LLVM_DSA_REPO "https://github.com/satbekmyrza/llvm-dsa.git"
+    set (LLVM_DSA_REPO "https://github.com/seahorn/llvm-dsa"
       CACHE STRING "llvm-dsa repo")
-    set (SEAHORN_LLVM_REPO "https://github.com/satbekmyrza/llvm-seahorn.git"
+    set (SEAHORN_LLVM_REPO "https://github.com/seahorn/llvm-seahorn"
       CACHE STRING "seahorn-llvm repo")
 
     add_custom_target (llvm-dsa-git
-      ${GIT_EXECUTABLE} clone ${LLVM_DSA_REPO} ${CMAKE_SOURCE_DIR}/llvm-dsa)
+      ${GIT_EXECUTABLE} clone --branch "stable-llvm-3.6" ${LLVM_DSA_REPO} ${CMAKE_SOURCE_DIR}/llvm-dsa)
     add_custom_target (seahorn-llvm-git
-      ${GIT_EXECUTABLE} clone ${SEAHORN_LLVM_REPO} ${CMAKE_SOURCE_DIR}/llvm-seahorn)
+      ${GIT_EXECUTABLE} clone --branch "stable-llvm-3.6" ${SEAHORN_LLVM_REPO} ${CMAKE_SOURCE_DIR}/llvm-seahorn)
 
     add_custom_target (extra DEPENDS llvm-dsa-git seahorn-llvm-git)
   endif ()
 
-  # TODO: should this link be updated?
   set (CRAB_REPO "https://github.com/seahorn/crab.git" CACHE STRING "crab repo")
   
   if (TopLevel)
@@ -127,10 +126,12 @@ if (GIT_FOUND)
   endif ()
   
   add_custom_target (crab-git
-    ${GIT_EXECUTABLE} clone --depth 1 --branch "v1.0" ${CRAB_REPO} ${CRAB_ROOT})
-  add_custom_target (crab
-    ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
+     		     ${GIT_EXECUTABLE} clone ${CRAB_REPO} ${CRAB_ROOT})
+  
+  add_custom_target (crab ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
+                     DEPENDS crab-git)    
     DEPENDS crab-git)
+                     DEPENDS crab-git)    
 
 else ()
   if (TopLevel)
@@ -157,9 +158,7 @@ if (TopLevel)
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/ext/llvm
     INSTALL_DIR ${CMAKE_BINARY_DIR}/run
     CMAKE_ARGS
-    # -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    --parallel 97
-    -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8
+    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DLLVM_TARGETS_TO_BUILD:STRING=X86 -DWITH_POLY:BOOL=OFF
@@ -211,7 +210,7 @@ if (TopLevel)
   #find_package(Curses)
 endif()
 
-# add_definitions(-std=c++11)  # TODO: could this be a problem?
+add_definitions(-std=c++11)
 #add_definitions(-Wall)
 add_definitions(-Wno-redeclared-class-member)
 add_definitions(-Wno-sometimes-uninitialized)
