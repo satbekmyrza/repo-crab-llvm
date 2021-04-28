@@ -126,11 +126,9 @@ if (GIT_FOUND)
   endif ()
   
   add_custom_target (crab-git
-     		     ${GIT_EXECUTABLE} clone ${CRAB_REPO} ${CRAB_ROOT})
+     		     ${GIT_EXECUTABLE} clone --branch v1.0 ${CRAB_REPO} ${CRAB_ROOT})
   
   add_custom_target (crab ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
-                     DEPENDS crab-git)    
-    DEPENDS crab-git)
                      DEPENDS crab-git)    
 
 else ()
