@@ -133,7 +133,7 @@ if (GIT_FOUND)
     DEPENDS crab-git)    
   
   message(STATUS "-------------")
-  message(STATUS "Hello from CMakeLists.txt in satbekmyrza/crab-llvm!")
+  message(STATUS "Hello from CMakeLists.txt in satbekmyrza/crab-llvm! Git found!")
   message(STATUS "${CMAKE_CURRENT_LIST_FILE}")
   message(STATUS "-------------")
 
