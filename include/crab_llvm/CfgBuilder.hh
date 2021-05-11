@@ -2,28 +2,35 @@
 #define __CFG_BUILDER_HH_
 
 /* 
- * Translate a LLVM function to a Crab control-flow graph.
+ * Translate a LLVM function to a Crab CFG.
+ *
+ * WARNING: the translation is, in general, an abstraction of the
+ * concrete semantics of the input program. 
  */
 
 #include <boost/optional.hpp>
 #include <boost/noncopyable.hpp>
+
+#include "llvm/IR/Function.h"
+#include "llvm/IR/Value.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/Instructions.h"
+
+#include "crab_llvm/SymEval.hh"
 #include "crab_llvm/crab_cfg.hh"
 
-// forward declarations
+// forward declaration
 namespace llvm {
   class DataLayout;
   class TargetLibraryInfo;
-  class BasicBlock;
-  class Function;
-  class Twine;
-}
-
-namespace crab_llvm {
-  class HeapAbstraction;
 }
 
 namespace crab_llvm {
   
+  class MemAnalysis;
+
+  typedef SymEval<VariableFactory, z_lin_exp_t> sym_eval_t;
+
   class CfgBuilder: public boost::noncopyable {
    public:
 
@@ -35,35 +42,46 @@ namespace crab_llvm {
 				 basic_block_t&> llvm_bb_map_t;
 
     bool m_is_cfg_built;
-    llvm::Function &m_func;
-    llvm_variable_factory &m_vfac;
-    HeapAbstraction &m_mem;
-    crab::cfg::tracked_precision m_tracklev;
+    Function& m_func;
+    sym_eval_t m_sev;
     unsigned m_id;
     cfg_ptr_t m_cfg;
     llvm_bb_map_t m_bb_map;
+    tracked_precision m_tracklev;
     bool m_is_inter_proc;
-    const llvm::DataLayout* m_dl;
-    const llvm::TargetLibraryInfo *m_tli;
+    const DataLayout* m_dl;
+    const TargetLibraryInfo* m_tli;
     // Placeholder blocks added *temporary* to the LLVM bitecode for
     // translating Branch instructions into Crab assume statements
-    std::vector<llvm::BasicBlock*> m_fake_assume_blocks;
+    vector<llvm::BasicBlock*> m_fake_assume_blocks;
 
    public:
     
-    CfgBuilder(llvm::Function& func, 
-	       llvm_variable_factory &vfac,
-	       HeapAbstraction &mem, 
-	       crab::cfg::tracked_precision tracklev,
-	       bool isInterProc,
-	       const llvm::TargetLibraryInfo *tli);
+    CfgBuilder (Function& func, 
+                VariableFactory& vfac, MemAnalysis& mem, 
+                tracked_precision tracklev, bool isInterProc,
+                const TargetLibraryInfo* tli);
     
-    ~CfgBuilder();
+    ~CfgBuilder ();
 
-    cfg_ptr_t getCfg();
+    cfg_ptr_t getCfg ();
     
+    // for ConcCrabLlvm
+    sym_eval_t getSymEval () { return m_sev; }
+
    private:
     
+    const llvm::BasicBlock* createFakeBlock (LLVMContext &ctx, 
+                                             const Twine &name,
+                                             Function *parent);
+
+    string create_bb_name(string prefix = "") {
+      if (prefix == "") prefix = string("__@bb_");
+      ++m_id;
+      string id_str = std::to_string(m_id);
+      return prefix + id_str;
+    }
+
     void build_cfg();
 
     opt_basic_block_t lookup(const llvm::BasicBlock &);
@@ -78,11 +96,6 @@ namespace crab_llvm {
     basic_block_t& add_block_in_between (basic_block_t &src, 
                                          basic_block_t &dst, 
                                          const llvm::BasicBlock* B) ;
-
-    const llvm::BasicBlock* create_fake_block(llvm::LLVMContext &ctx, 
-                                             const llvm::Twine &name,
-                                             llvm::Function *parent);
-    
 
   }; // end class CfgBuilder
 

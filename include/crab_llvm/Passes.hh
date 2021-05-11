@@ -4,13 +4,11 @@
 #include "crab_llvm/config.h"
 #include "llvm/Pass.h"
 
-namespace crab_llvm {
-
-  // Preprocessor passes
+namespace crab_llvm
+{
   llvm::Pass* createLowerCstExprPass ();
   llvm::Pass* createLowerGvInitializersPass ();
   llvm::Pass* createLowerSelectPass ();
-  llvm::Pass* createLowerUnsignedICmpPass ();
   llvm::Pass* createMarkInternalInlinePass ();
   llvm::Pass* createRemoveUnreachableBlocksPass ();
   llvm::Pass* createSimplifyAssumePass ();

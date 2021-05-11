@@ -104,20 +104,20 @@ find_package (Git)
 
 if (GIT_FOUND)
   if (TopLevel)
-    set (LLVM_DSA_REPO "https://github.com/seahorn/llvm-dsa"
+    set (LLVM_DSA_REPO "https://github.com/satbekmyrza/llvm-dsa"
       CACHE STRING "llvm-dsa repo")
-    set (SEAHORN_LLVM_REPO "https://github.com/seahorn/llvm-seahorn"
+    set (SEAHORN_LLVM_REPO "https://github.com/satbekmyrza/llvm-seahorn"
       CACHE STRING "seahorn-llvm repo")
 
     add_custom_target (llvm-dsa-git
-      ${GIT_EXECUTABLE} clone --branch "stable-llvm-3.6" ${LLVM_DSA_REPO} ${CMAKE_SOURCE_DIR}/llvm-dsa)
+      ${GIT_EXECUTABLE} clone ${LLVM_DSA_REPO} ${CMAKE_SOURCE_DIR}/llvm-dsa)
     add_custom_target (seahorn-llvm-git
-      ${GIT_EXECUTABLE} clone --branch "stable-llvm-3.6" ${SEAHORN_LLVM_REPO} ${CMAKE_SOURCE_DIR}/llvm-seahorn)
+      ${GIT_EXECUTABLE} clone ${SEAHORN_LLVM_REPO} ${CMAKE_SOURCE_DIR}/llvm-seahorn)
 
     add_custom_target (extra DEPENDS llvm-dsa-git seahorn-llvm-git)
   endif ()
 
-  set (CRAB_REPO "https://github.com/seahorn/crab.git" CACHE STRING "crab repo")
+  set (CRAB_REPO "https://github.com/satbekmyrza/crab.git" CACHE STRING "crab repo")
   
   if (TopLevel)
     set (CRAB_ROOT "${CMAKE_SOURCE_DIR}/crab" CACHE STRING "crab root directory")
@@ -126,16 +126,15 @@ if (GIT_FOUND)
   endif ()
   
   add_custom_target (crab-git
-    ${GIT_EXECUTABLE} clone --depth 1 --branch v1.0 ${CRAB_REPO} ${CRAB_ROOT})
+     		     ${GIT_EXECUTABLE} clone ${CRAB_REPO} ${CRAB_ROOT})
   
   add_custom_target (crab
     ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
+                     DEPENDS crab-git)    
     DEPENDS crab-git)    
-  
-  message(STATUS "-------------")
-  message(STATUS "Hello from CMakeLists.txt in satbekmyrza/crab-llvm! Git found!")
-  message(STATUS "${CMAKE_CURRENT_LIST_FILE}")
-  message(STATUS "-------------")
+                     DEPENDS crab-git)    
+    DEPENDS crab-git)    
+                     DEPENDS crab-git)    
 
 else ()
   if (TopLevel)
@@ -157,10 +156,8 @@ endif()
 if (TopLevel)
   # if top-level, offer to build llvm
   ExternalProject_Add (llvm
-    GIT_REPOSITORY https://github.com/llvm/llvm-project.git
-    GIT_TAG llvmorg-3.6.0
+    SVN_REPOSITORY http://llvm.org/svn/llvm-project/llvm/tags/RELEASE_360/final/
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/ext/llvm
-    SOURCE_SUBDIR llvm
     INSTALL_DIR ${CMAKE_BINARY_DIR}/run
     CMAKE_ARGS
     -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
@@ -170,7 +167,6 @@ if (TopLevel)
     -DLLVM_ENABLE_PEDANTIC=OFF 
     -DLLVM_ENABLE_PIC=ON -DLLVM_REQUIRES_RTTI:BOOL=TRUE
     -DLLVM_BUILD_LLVM_DYLIB:BOOL=${BUILD_CRABLLVM_LIBS_SHARED}
-    -DLLVM_BINDINGS_LIST=" "
     LOG_CONFIGURE 1
     LOG_BUILD 1
     LOG_INSTALL 1)
@@ -216,7 +212,7 @@ if (TopLevel)
 endif()
 
 add_definitions(-std=c++11)
-#add_definitions(-Wall)
+
 add_definitions(-Wno-redeclared-class-member)
 add_definitions(-Wno-sometimes-uninitialized)
 add_definitions(-Wno-deprecated-declarations)
