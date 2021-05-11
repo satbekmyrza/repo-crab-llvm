@@ -131,10 +131,6 @@ if (GIT_FOUND)
   add_custom_target (crab
     ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
                      DEPENDS crab-git)    
-    DEPENDS crab-git)    
-                     DEPENDS crab-git)    
-    DEPENDS crab-git)    
-                     DEPENDS crab-git)    
 
 else ()
   if (TopLevel)
